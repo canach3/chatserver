@@ -1,6 +1,6 @@
-package com.example.chatserver.Member.repository;
+package com.example.chatserver.member.repository;
 
-import com.example.chatserver.Member.domain.Member;
+import com.example.chatserver.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

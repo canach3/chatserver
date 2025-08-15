@@ -1,0 +1,67 @@
+package com.example.chatserver.common.auth;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import jakarta.servlet.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+@Component
+public class JwtAuthFilter extends GenericFilter {
+    @Value("${jwt.secretKey}") private String secretKey;
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        String token = httpRequest.getHeader("Authorization");
+
+        try {
+            if (token != null) { // 토큰이 안 들어가있는 경우에는 그냥 넘어감 (이후 SecurityConfig에서 Authentication 객체가 있는 지 검사했을 때 없으므로 에러가 발생함)
+                if (!token.substring(0, 7).equals("Bearer ")) {
+                    throw new AuthenticationServiceException("Bearer 형식이 아님");
+                }
+
+                String jwtToken = token.substring(7);
+
+                // 토큰 검증 및 claims 추출
+                Claims claims = Jwts.parserBuilder()
+                        .setSigningKey(secretKey)
+                        .build()
+                        .parseClaimsJws(jwtToken)
+                        .getBody();
+
+                List<GrantedAuthority> authorities = new ArrayList<>();
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + claims.get("role")));
+                UserDetails userDetails = new User(claims.getSubject(), "", authorities);
+                Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
+            chain.doFilter(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+            httpResponse.setContentType("application/json");
+            httpResponse.getWriter().write("invalid token");
+        }
+
+
+    }
+}

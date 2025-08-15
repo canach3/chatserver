@@ -1,4 +1,4 @@
-package com.example.chatserver.Member.domain;
+package com.example.chatserver.member.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

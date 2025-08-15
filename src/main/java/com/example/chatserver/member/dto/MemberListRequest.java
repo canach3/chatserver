@@ -1,4 +1,4 @@
-package com.example.chatserver.Member.dto;
+package com.example.chatserver.member.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberSaveRequest {
+public class MemberListRequest {
+    private Long id;
     private String name;
     private String email;
-    private String password;
-
 }
