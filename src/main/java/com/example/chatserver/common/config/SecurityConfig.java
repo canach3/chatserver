@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // http Basic 비활성화
                 // 특정 url 패턴에 대해서는 Authentication 객체를 요구하지 않음 = 인증처리를 하지 않음
-                .authorizeHttpRequests(a -> a.requestMatchers("/member/create", "/member/doLogin", "/connect").permitAll().anyRequest().authenticated())
+                .authorizeHttpRequests(a -> a.requestMatchers("/member/create", "/member/doLogin", "/connect/**").permitAll().anyRequest().authenticated())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 방식을 사용하지 않음
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
