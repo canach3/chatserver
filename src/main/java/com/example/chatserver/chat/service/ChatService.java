@@ -211,4 +211,23 @@ public class ChatService {
 
         return myChatListResponses;
     }
+
+    public void leaveGroupChatRoom(Long roomId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new EntityNotFoundException("room cannot be found"));
+        Member member = memberRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new EntityNotFoundException("Member cannot be found"));
+        if (chatRoom.getIsGroupChat().equals("N")) {
+            throw new IllegalArgumentException("단체 채팅방이 아닙니다.");
+        }
+
+        ChatParticipant c = chatParticipantRepository.findByChatRoomAndMember(chatRoom, member)
+                .orElseThrow(() -> new EntityNotFoundException("참여자를 찾을 수 없습니다."));
+        chatParticipantRepository.delete(c);
+
+        List<ChatParticipant> chatParticipants = chatParticipantRepository.findByChatRoom(chatRoom);
+        if (chatParticipants.isEmpty()) {
+            chatRoomRepository.delete(chatRoom);
+        }
+    }
 }
