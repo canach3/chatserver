@@ -7,6 +7,7 @@ import com.example.chatserver.chat.domain.ReadStatus;
 import com.example.chatserver.chat.dto.ChatHistoryResponse;
 import com.example.chatserver.chat.dto.ChatMessageRequest;
 import com.example.chatserver.chat.dto.ChatRoomResponse;
+import com.example.chatserver.chat.dto.MyChatListResponse;
 import com.example.chatserver.chat.repository.ChatMessageRepository;
 import com.example.chatserver.chat.repository.ChatParticipantRepository;
 import com.example.chatserver.chat.repository.ChatRoomRepository;
@@ -187,5 +188,27 @@ public class ChatService {
             r.updateIsRead(true);
 
         }
+    }
+
+    public List<MyChatListResponse> getMyChatRoom() {
+        Member member = memberRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new EntityNotFoundException("Member cannot be found"));
+        List<ChatParticipant> chatParticipants = chatParticipantRepository.findAllByMember(member);
+
+        List<MyChatListResponse> myChatListResponses = new ArrayList<>();
+
+        for (ChatParticipant c : chatParticipants) {
+            Long count = readStatusRepository.countByChatRoomAndMemberAndIsReadFalse(c.getChatRoom(), member);
+
+            MyChatListResponse myChatListResponse = MyChatListResponse.builder()
+                    .roomId(c.getChatRoom().getId())
+                    .roomName(c.getChatRoom().getName())
+                    .isGroupChat(c.getChatRoom().getIsGroupChat())
+                    .unReadCount(count)
+                    .build();
+            myChatListResponses.add(myChatListResponse);
+        }
+
+        return myChatListResponses;
     }
 }
