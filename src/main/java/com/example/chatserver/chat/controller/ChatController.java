@@ -43,4 +43,11 @@ public class ChatController {
         List<ChatHistoryResponse> chatHistoryResponses = chatService.getChatHistory(roomId);
         return new ResponseEntity<>(chatHistoryResponses, HttpStatus.OK);
     }
+
+    // 채팅 메시지 읽음처리
+    @PostMapping("/room/{roomId}/read")
+    public ResponseEntity<?> messageRead(@PathVariable(value = "roomId") Long roomId) {
+        chatService.messageRead(roomId);
+        return ResponseEntity.ok().build();
+    }
 }
