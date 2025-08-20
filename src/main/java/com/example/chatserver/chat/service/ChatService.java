@@ -124,7 +124,7 @@ public class ChatService {
                 .chatRoom(chatRoom)
                 .member(member)
                 .build();
-
+        chatParticipantRepository.save(chatParticipant);
     }
 
     public List<ChatHistoryResponse> getChatHistory(Long roomId) {

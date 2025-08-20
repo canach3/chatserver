@@ -3,7 +3,6 @@ package com.example.chatserver.chat.config;
 import com.example.chatserver.chat.service.ChatService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -14,11 +13,14 @@ import org.springframework.security.authentication.AuthenticationServiceExceptio
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class StompHandler implements ChannelInterceptor {
     @Value("${jwt.secretKey}")
     private String secretKey;
     private final ChatService chatService;
+
+    public StompHandler(ChatService chatService) {
+        this.chatService = chatService;
+    }
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {

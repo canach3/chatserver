@@ -16,18 +16,18 @@ public class StompEventListener {
     private final Set<String> sessions = ConcurrentHashMap.newKeySet();
 
     @EventListener
-    public void connectHandle(SessionConnectEvent event) {
+    public void connectHandle(SessionConnectEvent event){
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         sessions.add(accessor.getSessionId());
-        System.out.println("connect sessionId = " + accessor.getSessionId());
+        System.out.println("connect sessiond ID" + accessor.getSessionId());
         System.out.println("total session : " + sessions.size());
     }
 
     @EventListener
-    public void disconnectHandle(SessionDisconnectEvent event) {
+    public void disconnectHandle(SessionDisconnectEvent event){
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         sessions.remove(accessor.getSessionId());
-        System.out.println("connect sessionId = " + accessor.getSessionId());
+        System.out.println("disconnect sessiond ID" + accessor.getSessionId());
         System.out.println("total session : " + sessions.size());
     }
 }
