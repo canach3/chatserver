@@ -26,7 +26,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception{
         return httpSecurity
-                .cors(cors -> cors.configurationSource(configurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // http Basic 비활성화
                 // 특정 url 패턴에 대해서는 Authentication 객체를 요구하지 않음 = 인증처리를 하지 않음
@@ -37,7 +37,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    CorsConfigurationSource configurationSource() {
+    CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
         configuration.setAllowedMethods(Arrays.asList("*")); // 모든 http 메서드 허용

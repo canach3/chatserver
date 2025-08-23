@@ -14,7 +14,7 @@ import java.util.Date;
 public class JwtTokenProvider {
     private final String secretKey;
     private final int expiration;
-    private final Key SECRET_KEY;
+    private Key SECRET_KEY;
 
     public JwtTokenProvider(
             @Value("${jwt.secretKey}") String secretKey,
@@ -36,8 +36,4 @@ public class JwtTokenProvider {
                 .compact();
         return token;
     }
-
-
-
-
 }

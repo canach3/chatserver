@@ -27,9 +27,9 @@ public class JwtAuthFilter extends GenericFilter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-        HttpServletResponse httpResponse = (HttpServletResponse) response;
-        String token = httpRequest.getHeader("Authorization");
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        String token = httpServletRequest.getHeader("Authorization");
 
         try {
             if (token != null) { // 토큰이 안 들어가있는 경우에는 그냥 넘어감 (이후 SecurityConfig에서 Authentication 객체가 있는 지 검사했을 때 없으므로 에러가 발생함)
@@ -57,9 +57,9 @@ public class JwtAuthFilter extends GenericFilter {
             chain.doFilter(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-            httpResponse.setContentType("application/json");
-            httpResponse.getWriter().write("invalid token");
+            httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+            httpServletResponse.setContentType("application/json");
+            httpServletResponse.getWriter().write("invalid token");
         }
 
 

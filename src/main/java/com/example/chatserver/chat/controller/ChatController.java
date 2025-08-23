@@ -1,6 +1,6 @@
 package com.example.chatserver.chat.controller;
 
-import com.example.chatserver.chat.dto.ChatHistoryResponse;
+import com.example.chatserver.chat.dto.ChatMessageDto;
 import com.example.chatserver.chat.dto.ChatRoomResponse;
 import com.example.chatserver.chat.dto.MyChatListResponse;
 import com.example.chatserver.chat.service.ChatService;
@@ -26,7 +26,7 @@ public class ChatController {
 
     // 그룹 채팅 목록 조회
     @GetMapping("/room/group/list")
-    public ResponseEntity<?> getCroupChatRooms() {
+    public ResponseEntity<?> getGroupChatRooms() {
         List<ChatRoomResponse> chatRooms = chatService.getGroupChatRooms();
         return new ResponseEntity<>(chatRooms, HttpStatus.OK);
     }
@@ -41,8 +41,8 @@ public class ChatController {
     // 이전 메시지 조회
     @GetMapping("/history/{roomId}")
     public ResponseEntity<?> getChatHistory(@PathVariable(value = "roomId") Long roomId) {
-        List<ChatHistoryResponse> chatHistoryResponses = chatService.getChatHistory(roomId);
-        return new ResponseEntity<>(chatHistoryResponses, HttpStatus.OK);
+        List<ChatMessageDto> chatMessageDtos = chatService.getChatHistory(roomId);
+        return new ResponseEntity<>(chatMessageDtos, HttpStatus.OK);
     }
 
     // 채팅 메시지 읽음처리
@@ -65,6 +65,12 @@ public class ChatController {
     public ResponseEntity<?> leaveGroupChatRoom(@PathVariable(value = "roomId") Long roomId) {
         chatService.leaveGroupChatRoom(roomId);
         return ResponseEntity.ok().build();
+    }
 
+    // 개인 채팅방 개설 혹은 기존 roomId 리턴
+    @PostMapping("/room/private/create")
+    public ResponseEntity<?> getOrCreatePrivateRoom(@RequestParam(value = "otherMemberId") Long otherMemberId) {
+        Long roomId = chatService.getOrCreatePrivateRoom(otherMemberId);
+        return new ResponseEntity<>(roomId, HttpStatus.OK);
     }
 }

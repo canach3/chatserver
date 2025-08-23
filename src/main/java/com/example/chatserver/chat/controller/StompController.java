@@ -1,6 +1,6 @@
 package com.example.chatserver.chat.controller;
 
-import com.example.chatserver.chat.dto.ChatMessageRequest;
+import com.example.chatserver.chat.dto.ChatMessageDto;
 import com.example.chatserver.chat.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -27,9 +27,13 @@ public class StompController {
     // 방법 2 : MessageMapping 어노테이션만 활용
     @MessageMapping("/{roomId}")
     // @DestinationVariable : @MessageMapping 어노테이션으로 정의된 Websocket Controller 내에서만 사용됨(@PathVariable과 비슷)
-    public void sendMessage(@DestinationVariable Long roomId, ChatMessageRequest chatMessageRequest) {
-        System.out.println(chatMessageRequest);
-        chatService.saveMessage(roomId, chatMessageRequest);
-        messageTemplate.convertAndSend("/topic/" + roomId, chatMessageRequest);
+    public void sendMessage(@DestinationVariable(value = "roomId") Long roomId, ChatMessageDto chatMessageReqDto) {
+        System.out.println(chatMessageReqDto.getMessage());
+        chatService.saveMessage(roomId, chatMessageReqDto);
+        chatMessageReqDto.setRoomId(roomId);
+        messageTemplate.convertAndSend("/topic/" + roomId, chatMessageReqDto);
+
+//        System.out.println(chatMessageRequest);
+//        chatService.saveMessage(roomId, chatMessageRequest);
     }
 }
